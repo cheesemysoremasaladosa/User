@@ -1,6 +1,7 @@
 import { Text, View } from "react-native";
-import { UserMap } from "@/components/Maps"
-import {Home }  from "./home";
+import { UserMap } from "@/components/Maps";
+import { Dock } from "./(tabs)/dock";
+import Veggie from "@/components/Veggie";
 export default function Index() {
   return (
     <View
@@ -11,7 +12,7 @@ export default function Index() {
       }}
     >
       <Text>Screen 1: Map + catalog</Text>
-      <Text>Screen 2(call to action on Map):  Partner catalog</Text>
+      <Text>Screen 2(call to action on Map): Partner catalog</Text>
       <Text>Screen 3: User Cart. </Text>
     </View>
   );
