@@ -5,11 +5,9 @@ import {
   TypeLocation,
 } from "@/types/types";
 
-const Server_URL = 'http://127.0.0.1:8000/'
-
 export async function getVegetableCatalog(): Promise<CatalogData> {
   //GET the vegetable catalog using the /catalog endpoint
-  const response = await fetch(Server_URL + "catalog");
+  const response = await fetch("http://192.168.0.108:8000/catalog");
   const catalog_json = await response.json();
   const catalog_entries = Object.entries(catalog_json.catalog);
   const catalog_map = new Map(
@@ -22,7 +20,7 @@ export async function getVegetableCatalog(): Promise<CatalogData> {
 // export async function getAllPartners(): Promise<PartnerData> {
 // }
 export async function getAllPartners(): Promise<TypeLocation[]> {
-  const url = new URL(Server_URL + "partners");
+  const url = new URL("http://192.168.0.108:8000/partners");
   url.searchParams.append("radius", "10000");
   url.searchParams.append("lat", "10.0");
   url.searchParams.append("lon", "10.0");
