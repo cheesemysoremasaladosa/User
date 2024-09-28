@@ -1,95 +1,131 @@
 import { UserMap } from "@/components/Maps";
-import { CatalogData, CatalogState, Vegetable } from "@/types/types";
-import { Location } from "@/types/types";
-import { CatalogSkeleton, Catalog } from "@/components/Catalog";
-import { getVegetableCatalog } from "@/api/user";
+import { TypeLocation } from "@/types/types";
+import { BlurView } from "expo-blur";
 import { useState, createContext, useEffect, useContext } from "react";
-import { StyleSheet, View, Text, ViewBase, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ViewBase,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import { getAllPartners } from "@/api/user";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+import ListPartners from "@/components/ListPartners";
 
-const CatalogContext = createContext<CatalogState>({} as CatalogState);
+async function getCurrentLocation(): Promise<TypeLocation | null> {
+  let { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") {
+    console.error("Permission to access location was denied");
+    return null;
+  }
+
+  let location = await Location.getCurrentPositionAsync({});
+  return {
+    title: "name",
+    latitude: location.coords.latitude,
+    longitude: location.coords.longitude,
+    latitudeDelta: 0.003,
+    longitudeDelta: 0.019,
+  };
+}
+async function getPartners(): Promise<TypeLocation[] | void> {
+  let partners = await getAllPartners();
+}
 export default function Home() {
-  const [cart, setCart] = useState<Set<Vegetable>>(new Set());
+  const [loc, setLoc] = useState<TypeLocation>({
+    title: "user",
+    latitude: 0.0,
+    longitude: 0.0,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [locations, setLocations] = useState<TypeLocation[]>([]);
 
-  async function handleVeggie(vegetable: Vegetable) {
-    setCart(new Set(cart.add(vegetable)));
-  }
-  const [region, setRegion] = useState<Location>();
-  let [catalogLoading, setCatalogLoading] = useState<boolean>(true);
-
-  let [catalogError, setCatalogError] = useState<boolean>(false);
-  const [catalog, setCatalog] = useState<CatalogData>({} as CatalogData);
-  //   const { catalog, setCatalog } = useContext(CatalogContext);
   useEffect(() => {
-    async function fetchCatalog() {
-      try {
-        const data = await getVegetableCatalog();
-        // const data = await fetch("http://192.168.0.108:8000/catalog");
-        console.log("data is ", data);
-        setCatalog(data);
-      } catch (error) {
-        console.error("Failed to fetch vegetable catalog:", error);
-        // You might want to set an error state here and handle it in your UI
-      }
-    }
-
-    fetchCatalog();
-    // if (Object.keys(catalog).length === 0) {
-
-    getVegetableCatalog()
-      .then((data) => {
-        //TODO: cache catalog data in the AsyncStorage for a period of time i.e associcate a TTL with CatalogData
-        setCatalog(data);
-        console.log("console logging", data);
-        setCatalogLoading(false);
-      })
-      .catch(() => {
-        console.log();
-        setCatalogError(true);
-      });
-
-    // }
+    updateToCurrentLocation();
+    fetchPartners();
   }, []);
-  if (catalogError) {
-    return (
-      <View>
-        <Text>Error</Text>
-      </View>
-    );
-  }
-  if (catalogLoading) {
-    return (
-      <View>
-        <CatalogSkeleton />
-      </View>
-    );
-  }
+  const fetchPartners = async () => {
+    const fetchallPartners = await getAllPartners();
+    console.log("fetching partners ", fetchallPartners);
+    setLocations(fetchallPartners);
+  };
+
+  const updateToCurrentLocation = async () => {
+    try {
+      const currentLocation = await getCurrentLocation();
+      if (currentLocation) {
+        setLoc(currentLocation);
+      } else {
+        setErrorMsg("Unable to get current location");
+      }
+    } catch (error) {
+      setErrorMsg("Error updating location");
+      console.error("Error in updateToCurrentLocation:", error);
+    }
+  };
 
   return (
     <View style={style.container}>
-      <UserMap location="hl" />
-      <Text
-        style={{
-          fontSize: 32,
-          paddingLeft: 20,
-          paddingTop: 10,
-          backgroundColor: "lightgray",
-        }}
-      >
-        Catalog
-      </Text>
-      <ScrollView>
-        <View style={{ flexDirection: "column", flex: 1 }}>
-          <View style={{ flex: 10 }}>
-            <Catalog catalog={catalog} VeggiePressCallback={handleVeggie} />
-          </View>
-        </View>
-      </ScrollView>
+      <BlurView intensity={50} style={style.blurContainer}>
+        <UserMap location={loc} partners={locations} />
+        <View style={style.separator} />
+        <Text style={style.heading}>nearby bhajiwalas</Text>
+        <ScrollView style={style.scrollcontainer}>
+          {/* <View style={{ flexDirection: "column", flex: 1 }}>
+          <View style={{ flex: 10 }}> */}
+          <ListPartners partner={locations} />
+          {/* </View>
+        </View> */}
+        </ScrollView>
+      </BlurView>
     </View>
   );
 }
+
+// experimentation
 const style = StyleSheet.create({
   container: {
-    paddingTop: 10,
+    // paddingTop: 10,
+    // flex: 1,
+    // backgroundColor: "#F5F5DC", // Soft Beige
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollcontainer: {
+    // backgroundColor: "#F5F5DC", // Soft Beige
+  },
+  item: {
+    padding: 20,
+    fontSize: 15,
+    marginTop: 5,
+  },
+  heading: {
+    fontSize: 24, // Font size for the heading
+    fontWeight: "bold", // Bold text
+    color: "green", // Text color
+    textAlign: "center", // Center the text
+    marginBottom: 20, // Space below the heading
+    letterSpacing: 1, // Spacing between letters
+  },
+  blurContainer: {
+    width: "90%", // Width of the glass container
+    borderRadius: 20, // Rounded corners for the glass effect
+    justifyContent: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.3)", // Semi-transparent white background
+    borderColor: "#fff", // Optional border color
+    borderWidth: 1, // Optional border width
+  },
+  separator: {
+    marginTop: 20,
+    height: 2, // Height of the separator
+    width: "100%", // Width of the separator
+    backgroundColor: "#CED0CE", // Color of the separator
+    marginBottom: 10, // Space below the separator
   },
 });

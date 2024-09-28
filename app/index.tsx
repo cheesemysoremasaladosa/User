@@ -1,6 +1,5 @@
 import { Text, View } from "react-native";
 import { UserMap } from "@/components/Maps";
-import { Dock } from "./(tabs)/dock";
 import Veggie from "@/components/Veggie";
 export default function Index() {
   return (

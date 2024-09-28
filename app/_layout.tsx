@@ -1,18 +1,22 @@
+import { StackRouter } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { Tabs } from "expo-router";
 import { View, StyleSheet } from "react-native";
 
 export default function RootLayout() {
   return (
-    <View style={styles.outerContainer}>
-      <Tabs screenOptions={{ tabBarStyle: styles.container }}>
-        <Tabs.Screen name="index" options={{ title: "Bhajiwala" }} />
-        <Tabs.Screen
-          name="home"
-          options={{ title: "Home", tabBarActiveTintColor: "orange" }}
-        />
-      </Tabs>
-    </View>
+    // <View style={styles.outerContainer}>
+    <Stack>
+      <Stack.Screen
+        name="home"
+        options={{
+          headerTintColor: "green",
+          title: "BhajiWala",
+          headerBackButtonMenuEnabled: true,
+        }}
+      />
+    </Stack>
+    // </View>
   );
 }
 
