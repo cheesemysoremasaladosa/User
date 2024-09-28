@@ -7,11 +7,6 @@ export default function RootLayout() {
   return (
     // <View style={styles.outerContainer}>
     <Stack>
-<<<<<<< HEAD
-
-      <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-
-=======
       <Stack.Screen
         name="home"
         options={{
@@ -20,7 +15,6 @@ export default function RootLayout() {
           headerBackButtonMenuEnabled: true,
         }}
       />
->>>>>>> dev
     </Stack>
     // </View>
   );
