@@ -2,8 +2,10 @@ import { StackRouter } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { Tabs } from "expo-router";
 import { View, StyleSheet } from "react-native";
+import { useState } from "react";
 
 export default function RootLayout() {
+  const [title, setTitle] = useState("");
   return (
     // <View style={styles.outerContainer}>
     <Stack>

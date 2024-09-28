@@ -9,7 +9,9 @@ import {
   Text,
   View,
   SectionList,
+  Pressable,
 } from "react-native";
+import { Link } from "expo-router";
 
 export default function ListPartners({ partner }: { partner: TypeLocation[] }) {
   return (
@@ -19,7 +21,17 @@ export default function ListPartners({ partner }: { partner: TypeLocation[] }) {
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
             <Entypo name="shop" size={24} color="green" />
-            <Text style={styles.itemText}>{item.title}</Text>
+            <Link
+              href={{
+                pathname: "/vendor/[cartID]",
+                params: { cartID: item.title },
+              }}
+              asChild
+            >
+              <Pressable>
+                <Text style={styles.itemText}>{item.title}</Text>
+              </Pressable>
+            </Link>
           </View>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}

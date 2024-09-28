@@ -1,7 +1,9 @@
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { TypeLocation } from "@/types/types";
+import { Link, router } from "expo-router";
 // make location of type Location and get the
+const link = () => {};
 export function UserMap({
   location,
   partners,
@@ -9,12 +11,7 @@ export function UserMap({
   location: TypeLocation;
   partners: TypeLocation[];
 }) {
-  // useEffect(() => {
-  //   const currentLocation = getCurrentLocation();
-  //   if (currentLocation) {
-  //     setLoc(currentLocation);
-  //   }
-  // }, []);
+  // useEffect(() => {}, []);
   return (
     <View style={styles.container}>
       <MapView region={location} style={styles.map}>
@@ -29,6 +26,13 @@ export function UserMap({
                 longitude: location.longitude,
               }}
               title={location.title}
+              onPress={() => {
+                console.log("pressed map");
+                router.push({
+                  pathname: "/vendor/[cartID]",
+                  params: { cartID: "Ramesh" },
+                });
+              }}
             />
           ))}
       </MapView>
