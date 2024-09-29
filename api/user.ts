@@ -5,9 +5,11 @@ import {
   TypeLocation,
 } from "@/types/types";
 
+const app_url = process.env.EXPO_PUBLIC_SYSTEM_URL;
+
 export async function getVegetableCatalog(): Promise<CatalogData> {
   //GET the vegetable catalog using the /catalog endpoint
-  const response = await fetch("http://192.168.0.108:8000/catalog");
+  const response = await fetch(app_url + "/catalog");
   const catalog_json = await response.json();
   const catalog_entries = Object.entries(catalog_json.catalog);
   const catalog_map = new Map(
@@ -19,19 +21,20 @@ export async function getVegetableCatalog(): Promise<CatalogData> {
 
 // export async function getAllPartners(): Promise<PartnerData> {
 // }
-export async function getAllPartners(): Promise<TypeLocation[]> {
-  const url = new URL("http://192.168.0.108:8000/partners");
-  url.searchParams.append("radius", "10000");
-  url.searchParams.append("lat", "10.0");
-  url.searchParams.append("lon", "10.0");
+export async function getAllPartners(
+  userLocation: TypeLocation
+): Promise<PartnersWithLoc[]> {
+  console.log(app_url);
+  const url = new URL(app_url + "/partners");
+  url.searchParams.append("radius", "1");
+  console.log(userLocation);
+  url.searchParams.append("lat", String(userLocation.latitude));
+  url.searchParams.append("lon", String(userLocation.longitude));
   const response = await fetch(url.toString());
   const partner_json = await response.json();
-  let allpartners = convertToLocation(
-    partner_json.partners as PartnersWithLoc[]
-  );
-  return allpartners as TypeLocation[];
+  return partner_json.partners as PartnersWithLoc[];
 }
-function convertToLocation(response: PartnersWithLoc[]): TypeLocation[] {
+export function convertToLocation(response: PartnersWithLoc[]): TypeLocation[] {
   let allPartners: TypeLocation[] = [];
 
   for (const [resp, respval] of Object.entries(response)) {

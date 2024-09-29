@@ -1,4 +1,4 @@
-import { TypeLocation } from "@/types/types";
+import { PartnersWithLoc, TypeLocation } from "@/types/types";
 import React from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 
@@ -11,28 +11,31 @@ import {
   SectionList,
   Pressable,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
-export default function ListPartners({ partner }: { partner: TypeLocation[] }) {
+export default function ListPartners({
+  partner,
+}: {
+  partner: PartnersWithLoc[];
+}) {
   return (
     <View style={styles.container}>
       <FlatList
         data={partner}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Entypo name="shop" size={24} color="green" />
-            <Link
-              href={{
+          <Pressable
+            onPress={() => {
+              router.push({
                 pathname: "/vendor/[cartID]",
-                params: { cartID: item.title },
-              }}
-              asChild
-            >
-              <Pressable>
-                <Text style={styles.itemText}>{item.title}</Text>
-              </Pressable>
-            </Link>
-          </View>
+                params: { cartID: item.partner.id },
+              });
+            }}
+          >
+            <View style={styles.itemContainer}>
+              <Entypo name="shop" size={24} color="green" />
+              <Text style={styles.itemText}>{item.partner.name}</Text>
+            </View>
+          </Pressable>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         contentContainerStyle={styles.listContent}

@@ -27,6 +27,7 @@ export interface Partner {
 }
 export interface PartnersWithLoc {
   partner: Partner;
+  distance: locFloat;
   lat: locFloat;
   lon: locFloat;
 }

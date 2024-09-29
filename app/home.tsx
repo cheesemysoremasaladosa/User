@@ -1,15 +1,9 @@
 import { UserMap } from "@/components/Maps";
-import { TypeLocation } from "@/types/types";
+import { PartnersWithLoc, TypeLocation } from "@/types/types";
 import { BlurView } from "expo-blur";
 import { useState, createContext, useEffect, useContext } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  ViewBase,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, View, Text, ViewBase, FlatList } from "react-native";
+import { ScrollView } from "react-native-virtualized-view";
 import { getAllPartners } from "@/api/user";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
@@ -31,9 +25,6 @@ async function getCurrentLocation(): Promise<TypeLocation | null> {
     longitudeDelta: 0.019,
   };
 }
-async function getPartners(): Promise<TypeLocation[] | void> {
-  let partners = await getAllPartners();
-}
 export default function Home() {
   const [loc, setLoc] = useState<TypeLocation>({
     title: "user",
@@ -44,16 +35,22 @@ export default function Home() {
   });
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [locations, setLocations] = useState<TypeLocation[]>([]);
+  const [partners, setPartners] = useState<PartnersWithLoc[]>([]);
 
   useEffect(() => {
     updateToCurrentLocation();
-    fetchPartners();
+    fetchPartners(loc);
   }, []);
-  const fetchPartners = async () => {
-    const fetchallPartners = await getAllPartners();
+  useEffect(() => {
+    if (loc.latitude !== 0 && loc.longitude !== 0) {
+      fetchPartners(loc);
+    }
+  }, [loc]);
+  async function fetchPartners(user: TypeLocation) {
+    const fetchallPartners = await getAllPartners(user);
     console.log("fetching partners ", fetchallPartners);
-    setLocations(fetchallPartners);
-  };
+    setPartners(fetchallPartners);
+  }
 
   const updateToCurrentLocation = async () => {
     try {
@@ -72,15 +69,11 @@ export default function Home() {
   return (
     <View style={style.container}>
       <BlurView intensity={50} style={style.blurContainer}>
-        <UserMap location={loc} partners={locations} />
+        <UserMap location={loc} partners={partners} />
         <View style={style.separator} />
         <Text style={style.heading}>nearby bhajiwalas</Text>
         <ScrollView style={style.scrollcontainer}>
-          {/* <View style={{ flexDirection: "column", flex: 1 }}>
-          <View style={{ flex: 10 }}> */}
-          <ListPartners partner={locations} />
-          {/* </View>
-        </View> */}
+          <ListPartners partner={partners} />
         </ScrollView>
       </BlurView>
     </View>

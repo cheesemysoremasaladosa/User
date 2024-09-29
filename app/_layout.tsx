@@ -22,10 +22,6 @@ export default function RootLayout() {
   );
 }
 
-const ViewStyleProps = () => {
-  return <View style={styles.container}></View>;
-};
-
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 20,
