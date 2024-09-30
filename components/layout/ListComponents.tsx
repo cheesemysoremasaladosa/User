@@ -10,69 +10,29 @@ import {
   Button,
   Pressable,
 } from "react-native";
+import { Item } from "@/types/types"
 
-const DATA = [
-  {
-    id: "0",
-    title: "Zeroth Item",
-  },
-  {
-    id: "1",
-    title: "First Item",
-  },
-  {
-    id: "2",
-    title: "Second Item",
-  },
-  {
-    id: "3",
-    title: "Third Item",
-  },
-  {
-    id: "4",
-    title: "Third Item",
-  },
-  {
-    id: "5",
-    title: "Third Item",
-  },
-  {
-    id: "6",
-    title: "Third Item",
-  },
-  {
-    id: "7",
-    title: "Third Item",
-  },
-  {
-    id: "8",
-    title: "Third Item",
-  },
-  {
-    id: "9",
-    title: "Third Item",
-  },
-];
-
-const Item = ({ title, id }: { title: string; id: string }) => (
-  <View style={styles.item}>
-    <Image style={styles.image} source={require("@/asstes/item1.jpg")} />
-    <View style={styles.content}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.title}>{id}</Text>
+const Cartitem = ({ title, price}: { title: string; price: string }) => {
+  return (
+    <View style={styles.item}>
+      <Image style={styles.image} source={require("@/asstes/item1.jpg")} />
+      <View style={styles.content}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>₹{price}</Text>
+      </View>
+      <View></View>
     </View>
-    <View></View>
-  </View>
-);
+  );
+}
 
-export function ItemCatalog() {
+export function ItemCatalog({items}: {items: { vegetableId: number; name: string; price: number }[]}) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={DATA}
+        data={items}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Item title={item.title} id={item.id} />}
-        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Cartitem title={item.name.toString()} price={item.price.toString()} />}
+        keyExtractor={(item) => item.vegetableId.toString()}
         // refreshing = {false}
       />
     </SafeAreaView>

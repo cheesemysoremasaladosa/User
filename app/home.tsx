@@ -8,6 +8,7 @@ import { getAllPartners } from "@/api/user";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import ListPartners from "@/components/ListPartners";
+import { Link } from "expo-router";
 
 async function getCurrentLocation(): Promise<TypeLocation | null> {
   let { status } = await Location.requestForegroundPermissionsAsync();
@@ -75,6 +76,13 @@ export default function Home() {
         <ScrollView style={style.scrollcontainer}>
           <ListPartners partner={partners} />
         </ScrollView>
+
+
+        <Link href={{ pathname: "/vendor/[cartID]", params: { cartID: 1 , vendorName: 'Sam'} }}>
+          Go to vendor`s cart
+        </Link>
+
+
       </BlurView>
     </View>
   );

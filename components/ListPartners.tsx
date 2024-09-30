@@ -27,7 +27,7 @@ export default function ListPartners({
             onPress={() => {
               router.push({
                 pathname: "/vendor/[cartID]",
-                params: { cartID: item.partner.id },
+                params: { cartID: item.partner.id, vendorName: item.partner.name }, 
               });
             }}
           >
