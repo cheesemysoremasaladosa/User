@@ -6,8 +6,8 @@ import {
   Item
 } from "@/types/types";
 
-const app_url = 'http://192.168.1.6:8000';
-// const app_url = process.env.EXPO_PUBLIC_SYSTEM_URL;
+// const app_url = 'http://192.168.1.6:8000';
+const app_url = process.env.EXPO_PUBLIC_SYSTEM_URL;
 
 export async function getVegetableCatalog(): Promise<CatalogData> {
   //GET the vegetable catalog using the /catalog endpoint

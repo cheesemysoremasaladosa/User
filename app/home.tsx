@@ -78,9 +78,9 @@ export default function Home() {
         </ScrollView>
 
 
-        <Link href={{ pathname: "/vendor/[cartID]", params: { cartID: 1 , vendorName: 'Sam'} }}>
+        {/* <Link href={{ pathname: "/vendor/[cartID]", params: { cartID: 1 , vendorName: 'Sam'} }}>
           Go to vendor`s cart
-        </Link>
+        </Link> */}
 
 
       </BlurView>
