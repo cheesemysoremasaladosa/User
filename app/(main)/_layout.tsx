@@ -10,10 +10,11 @@ export default function RootLayout() {
     // <View style={styles.outerContainer}>
     <Stack>
       <Stack.Screen
-        name="home"
+        name="index"
         options={{
           headerTintColor: "green",
-          title: "BhajiWala",
+          // title: "BhajiWala",q
+          headerTitle: "Bhajiwala",
           headerBackButtonMenuEnabled: true,
         }}
       />
