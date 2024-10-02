@@ -31,7 +31,7 @@ export function UserMap({
               onPress={() => {
                 console.log("pressed map");
                 router.push({
-                  pathname: "/vendor/[cartID]",
+                  pathname: "/(vendor)/[cartID]",
                   params: { cartID: location.partner.id },
                 });
               }}

@@ -3,7 +3,7 @@ import {
   PartnerData,
   PartnersWithLoc,
   TypeLocation,
-  Item
+  Item,
 } from "@/types/types";
 
 // const app_url = 'http://192.168.1.6:8000';
@@ -12,16 +12,16 @@ const app_url = process.env.EXPO_PUBLIC_SYSTEM_URL;
 export async function getVegetableCatalog(): Promise<CatalogData> {
   //GET the vegetable catalog using the /catalog endpoint
   // const response = await fetch(app_url + "/catalog");
-  const url = app_url + '/catalog'
+  const url = app_url + "/catalog";
   const response = await fetch(url, {
-    method: 'GET',
+    method: "GET",
     headers: {
-      'Content-Type': 'application/json',      
+      "Content-Type": "application/json",
     },
   });
   if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
-    }
+    throw new Error(`Error: ${response.status}`);
+  }
   const catalog_json = await response.json();
   const catalog_entries = Object.entries(catalog_json.catalog);
   const catalog_map = new Map(
@@ -63,35 +63,31 @@ export function convertToLocation(response: PartnersWithLoc[]): TypeLocation[] {
   return allPartners;
 }
 
-export async function getVendorCart(vendorID: string): Promise<Item[]>{
-  // console.log(app_url)
-  const partnerID = vendorID as string
-  const  url = new URL(app_url + '/cart/' + partnerID)
-  // console.log(url)
+export async function getVendorCart(vendorID: string): Promise<Item[]> {
+  const partnerID = vendorID as string;
+  const url = new URL(app_url + "/cart/" + partnerID);
   try {
     const response = await fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    // console.log(response.status)
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
 
     const data = await response.json();
-    // const data1 = Object.entries(data)[0][1]
-    const items: Item[] = data.items.map((item: { price: number; vegetableId: number }) => ({
-      vegetableId: item.vegetableId,
-      price: item.price,
-    }));
-
-    // console.log('data --->' ,items);
+    const items: Item[] = data.items.map(
+      (item: { price: number; vegetableId: number }) => ({
+        vegetableId: item.vegetableId,
+        price: item.price,
+      })
+    );
 
     return items as Item[];
-  } catch (error){
-    console.error('Error fetching cart data.'+ error);
+  } catch (error) {
+    console.error("Error fetching cart data." + error);
     return [];
   }
 }

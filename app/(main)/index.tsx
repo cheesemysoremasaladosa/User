@@ -40,10 +40,12 @@ export default function Home() {
 
   useEffect(() => {
     updateToCurrentLocation();
-    fetchPartners(loc);
+    // fetchPartners(loc);
   }, []);
   useEffect(() => {
     if (loc.latitude !== 0 && loc.longitude !== 0) {
+      console.log("fetching partners");
+
       fetchPartners(loc);
     }
   }, [loc]);
@@ -77,12 +79,14 @@ export default function Home() {
           <ListPartners partner={partners} />
         </ScrollView>
 
-
-        <Link href={{ pathname: "/(vendor)/[cartID]", params: { cartID: 1 , vendorName: 'Sam'} }}>
+        <Link
+          href={{
+            pathname: "/(vendor)/[cartID]",
+            params: { cartID: 1, vendorName: "Sam" },
+          }}
+        >
           Go to vendor`s cart
         </Link>
-
-
       </BlurView>
     </View>
   );

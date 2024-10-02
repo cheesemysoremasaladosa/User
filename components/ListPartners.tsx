@@ -26,8 +26,11 @@ export default function ListPartners({
           <Pressable
             onPress={() => {
               router.push({
-                pathname: "/vendor/[cartID]",
-                params: { cartID: item.partner.id, vendorName: item.partner.name }, 
+                pathname: "/(vendor)/[cartID]",
+                params: {
+                  cartID: item.partner.id,
+                  vendorName: item.partner.name,
+                },
               });
             }}
           >
