@@ -10,9 +10,10 @@ import {
   Button,
   Pressable,
 } from "react-native";
-import { Item } from "@/types/types"
+import { Item } from "@/types/types";
+import { ParallaxScrollView } from "../ParallaxScrollView";
 
-const Cartitem = ({ title, price}: { title: string; price: string }) => {
+const Cartitem = ({ title, price }: { title: string; price: string }) => {
   return (
     <View style={styles.item}>
       <Image style={styles.image} source={require("@/asstes/item1.jpg")} />
@@ -23,19 +24,40 @@ const Cartitem = ({ title, price}: { title: string; price: string }) => {
       <View></View>
     </View>
   );
-}
+};
 
-export function ItemCatalog({items}: {items: { vegetableId: number; name: string; price: number }[]}) {
+export function ItemCatalog({
+  items,
+}: {
+  items: { vegetableId: number; name: string; price: number }[];
+}) {
   return (
-    <SafeAreaView style={styles.container}>
+    // <SafeAreaView style={styles.container}>
+    <ParallaxScrollView
+      headerBackgroundColor={{ dark: "white", light: "black" }}
+      headerImage={
+        <Image
+          style={{ resizeMode: "cover" }}
+          source={require("@/asstes/cart image.jpg")}
+        />
+      }
+    >
+      {/* <SafeAreaView style={styles.container}> */}
       <FlatList
         data={items}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <Cartitem title={item.name.toString()} price={item.price.toString()} />}
+        renderItem={({ item }) => (
+          <Cartitem
+            title={item.name.toString()}
+            price={item.price.toString()}
+          />
+        )}
         keyExtractor={(item) => item.vegetableId.toString()}
         // refreshing = {false}
       />
-    </SafeAreaView>
+      {/* </SafeAreaView> */}
+    </ParallaxScrollView>
+    // </SafeAreaView>
   );
 }
 

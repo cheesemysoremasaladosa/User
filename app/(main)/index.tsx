@@ -8,12 +8,12 @@ import { getAllPartners } from "@/api/user";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import ListPartners from "@/components/ListPartners";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import LocationAccess from "@/components/Location";
 
 async function getCurrentLocation(): Promise<TypeLocation | null> {
   let { status } = await Location.requestForegroundPermissionsAsync();
   if (status !== "granted") {
-    console.error("Permission to access location was denied");
     return null;
   }
 
@@ -26,6 +26,14 @@ async function getCurrentLocation(): Promise<TypeLocation | null> {
     longitudeDelta: 0.019,
   };
 }
+interface LocationState {
+  loc: TypeLocation;
+  setLoc: React.Dispatch<React.SetStateAction<TypeLocation>>;
+}
+
+export const LocationContext = createContext<LocationState>(
+  {} as LocationState
+);
 export default function Home() {
   const [loc, setLoc] = useState<TypeLocation>({
     title: "user",
@@ -34,17 +42,25 @@ export default function Home() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  const [errorMsg, setErrorMsg] = useState<string>("");
+  // const { loc, setLoc } = useContext(LocationContext);
+  const [errorMsg, setErrorMsg] = useState<boolean>(true);
   const [locations, setLocations] = useState<TypeLocation[]>([]);
   const [partners, setPartners] = useState<PartnersWithLoc[]>([]);
 
   useEffect(() => {
-    updateToCurrentLocation();
+    // if (!loc) {
+    //   <LocationAccess />;
+    // }
+    // if (loc) {
+    //   updateToCurrentLocation();
+    // } else {
+    //   router.push({ pathname: "/(vendor)/location" });
+    // }
     // fetchPartners(loc);
   }, []);
   useEffect(() => {
     if (loc.latitude !== 0 && loc.longitude !== 0) {
-      console.log("fetching partners");
+      // console.log("fetching partners");
 
       fetchPartners(loc);
     }
@@ -55,39 +71,45 @@ export default function Home() {
     setPartners(fetchallPartners);
   }
 
-  const updateToCurrentLocation = async () => {
-    try {
-      const currentLocation = await getCurrentLocation();
-      if (currentLocation) {
-        setLoc(currentLocation);
-      } else {
-        setErrorMsg("Unable to get current location");
-      }
-    } catch (error) {
-      setErrorMsg("Error updating location");
-      console.error("Error in updateToCurrentLocation:", error);
-    }
-  };
+  // const updateToCurrentLocation = async () => {
+  //   try {
+  //     const currentLocation = await getCurrentLocation();
+  //     if (currentLocation == null) {
+  //       setErrorMsg(true);
+  //     }
+  //     if (currentLocation) {
+  //       // console.log(location);
+  //       setLoc(currentLocation);
+  //     } else {
+  //       setErrorMsg(true);
+  //     }
+  //   } catch (error) {
+  //     setErrorMsg(true);
+  //   }
+  // };
 
   return (
     <View style={style.container}>
-      <BlurView intensity={50} style={style.blurContainer}>
-        <UserMap location={loc} partners={partners} />
-        <View style={style.separator} />
-        <Text style={style.heading}>nearby bhajiwalas</Text>
-        <ScrollView style={style.scrollcontainer}>
-          <ListPartners partner={partners} />
-        </ScrollView>
-
-        <Link
+      {loc.latitude > 0 ? (
+        <View style={{ backgroundColor: "light-gray" }}>
+          <UserMap location={loc} partners={partners} />
+          <View style={style.separator} />
+          <Text style={style.heading}>nearby bhajiwalas</Text>
+          <ScrollView style={style.scrollcontainer}>
+            <ListPartners partner={partners} />
+          </ScrollView>
+          {/* <Link
           href={{
-            pathname: "/(vendor)/[cartID]",
+            pathname: "/(vendor)/location",
             params: { cartID: 1, vendorName: "Sam" },
           }}
         >
           Go to vendor`s cart
-        </Link>
-      </BlurView>
+        </Link> */}
+        </View>
+      ) : (
+        <LocationAccess loc={loc} setLoc={setLoc} />
+      )}
     </View>
   );
 }
@@ -99,8 +121,8 @@ const style = StyleSheet.create({
     // flex: 1,
     // backgroundColor: "#F5F5DC", // Soft Beige
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
   },
   scrollcontainer: {
     // backgroundColor: "#F5F5DC", // Soft Beige
@@ -119,7 +141,13 @@ const style = StyleSheet.create({
     letterSpacing: 1, // Spacing between letters
   },
   blurContainer: {
+    padding: 20,
+    margin: 20,
+    flex: 1,
+    alignSelf: "center",
+    alignContent: "center",
     width: "90%", // Width of the glass container
+    alignItems: "center",
     borderRadius: 20, // Rounded corners for the glass effect
     justifyContent: "center",
     backgroundColor: "rgba(255, 255, 255, 0.3)", // Semi-transparent white background

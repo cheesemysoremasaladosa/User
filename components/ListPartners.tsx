@@ -59,6 +59,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   itemContainer: {
+    width: "90%",
+    alignSelf: "center",
     flexDirection: "row", // Align items horizontally
     alignItems: "center", // Center items vertically
     backgroundColor: "#fff", // White background for the list item
