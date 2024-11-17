@@ -42,20 +42,20 @@ export function ItemCatalog({
         />
       }
     >
-      {/* <SafeAreaView style={styles.container}> */}
-      <FlatList
-        data={items}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <Cartitem
-            title={item.name.toString()}
-            price={item.price.toString()}
-          />
-        )}
-        keyExtractor={(item) => item.vegetableId.toString()}
-        // refreshing = {false}
-      />
-      {/* </SafeAreaView> */}
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={items}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <Cartitem
+              title={item.name.toString()}
+              price={item.price.toString()}
+            />
+          )}
+          keyExtractor={(item) => item.vegetableId.toString()}
+          // refreshing = {false}
+        />
+      </SafeAreaView>
     </ParallaxScrollView>
     // </SafeAreaView>
   );

@@ -1,15 +1,18 @@
 import { UserMap } from "@/components/Maps";
 import { PartnersWithLoc, TypeLocation } from "@/types/types";
-import { BlurView } from "expo-blur";
 import { useState, createContext, useEffect, useContext } from "react";
-import { StyleSheet, View, Text, ViewBase, FlatList } from "react-native";
-import { ScrollView } from "react-native-virtualized-view";
+import { StyleSheet, View, Text } from "react-native";
 import { getAllPartners } from "@/api/user";
-import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import ListPartners from "@/components/ListPartners";
-import { Link, router } from "expo-router";
 import LocationAccess from "@/components/Location";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, {
+  BottomSheetScrollView,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import { FontAwesome } from "@expo/vector-icons";
+import { useCallback, useRef } from "react";
 
 async function getCurrentLocation(): Promise<TypeLocation | null> {
   let { status } = await Location.requestForegroundPermissionsAsync();
@@ -42,26 +45,13 @@ export default function Home() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  // const { loc, setLoc } = useContext(LocationContext);
   const [errorMsg, setErrorMsg] = useState<boolean>(true);
   const [locations, setLocations] = useState<TypeLocation[]>([]);
   const [partners, setPartners] = useState<PartnersWithLoc[]>([]);
 
-  useEffect(() => {
-    // if (!loc) {
-    //   <LocationAccess />;
-    // }
-    // if (loc) {
-    //   updateToCurrentLocation();
-    // } else {
-    //   router.push({ pathname: "/(vendor)/location" });
-    // }
-    // fetchPartners(loc);
-  }, []);
+  useEffect(() => {}, []);
   useEffect(() => {
     if (loc.latitude !== 0 && loc.longitude !== 0) {
-      // console.log("fetching partners");
-
       fetchPartners(loc);
     }
   }, [loc]);
@@ -71,61 +61,65 @@ export default function Home() {
     setPartners(fetchallPartners);
   }
 
-  // const updateToCurrentLocation = async () => {
-  //   try {
-  //     const currentLocation = await getCurrentLocation();
-  //     if (currentLocation == null) {
-  //       setErrorMsg(true);
-  //     }
-  //     if (currentLocation) {
-  //       // console.log(location);
-  //       setLoc(currentLocation);
-  //     } else {
-  //       setErrorMsg(true);
-  //     }
-  //   } catch (error) {
-  //     setErrorMsg(true);
-  //   }
-  // };
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  if (!loc.latitude) {
+    return <LocationAccess loc={loc} setLoc={setLoc} />;
+  }
 
   return (
-    <View style={style.container}>
-      {loc.latitude > 0 ? (
-        <View style={{ backgroundColor: "light-gray" }}>
-          <UserMap location={loc} partners={partners} />
-          <View style={style.separator} />
-          <Text style={style.heading}>nearby bhajiwalas</Text>
-          <ScrollView style={style.scrollcontainer}>
+    <GestureHandlerRootView style={styles.container}>
+      <View
+        style={{
+          position: "absolute",
+          top: "4%",
+          zIndex: 1000,
+          flex: 1,
+          width: "100%",
+          flexDirection: "row",
+          paddingHorizontal: "2%",
+          alignItems: "center",
+        }}
+      >
+        <FontAwesome name="navicon" size={24} color="#e9ecef" />
+      </View>
+      <UserMap location={loc} partners={partners} />
+      <BottomSheet
+        ref={bottomSheetRef}
+        onChange={handleSheetChanges}
+        enableDynamicSizing={false}
+        snapPoints={["60%"]}
+        enablePanDownToClose={false}
+        enableHandlePanningGesture={false}
+        style={{ shadowColor: "black", shadowOpacity: 0.5 }}
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          <Text style={style.heading}>Nearby Bhajiwalas</Text>
+          <BottomSheetScrollView>
             <ListPartners partner={partners} />
-          </ScrollView>
-          {/* <Link
-          href={{
-            pathname: "/(vendor)/location",
-            params: { cartID: 1, vendorName: "Sam" },
-          }}
-        >
-          Go to vendor`s cart
-        </Link> */}
-        </View>
-      ) : (
-        <LocationAccess loc={loc} setLoc={setLoc} />
-      )}
-    </View>
+          </BottomSheetScrollView>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
   );
 }
 
-// experimentation
 const style = StyleSheet.create({
   container: {
     // paddingTop: 10,
     // flex: 1,
-    // backgroundColor: "#F5F5DC", // Soft Beige
-    flex: 1,
+    // backgroundColor: "#F5F5DC",
+    // flex: 1,
     // justifyContent: "center",
     // alignItems: "center",
   },
   scrollcontainer: {
-    // backgroundColor: "#F5F5DC", // Soft Beige
+    // backgroundColor: "#F5F5DC",
   },
   item: {
     padding: 20,
@@ -133,32 +127,34 @@ const style = StyleSheet.create({
     marginTop: 5,
   },
   heading: {
-    fontSize: 24, // Font size for the heading
-    fontWeight: "bold", // Bold text
-    color: "green", // Text color
-    textAlign: "center", // Center the text
-    marginBottom: 20, // Space below the heading
-    letterSpacing: 1, // Spacing between letters
-  },
-  blurContainer: {
-    padding: 20,
-    margin: 20,
-    flex: 1,
-    alignSelf: "center",
-    alignContent: "center",
-    width: "90%", // Width of the glass container
-    alignItems: "center",
-    borderRadius: 20, // Rounded corners for the glass effect
-    justifyContent: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.3)", // Semi-transparent white background
-    borderColor: "#fff", // Optional border color
-    borderWidth: 1, // Optional border width
-  },
-  separator: {
-    marginTop: 20,
-    height: 2, // Height of the separator
-    width: "100%", // Width of the separator
-    backgroundColor: "#CED0CE", // Color of the separator
-    marginBottom: 10, // Space below the separator
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "black",
+    textAlign: "center",
+    marginBottom: 20,
+    letterSpacing: 1,
   },
 });
+const styles = {
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  contentContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  heading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  scrollcontainer: {
+    flex: 1,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "lightgray",
+    marginVertical: 10,
+  },
+};

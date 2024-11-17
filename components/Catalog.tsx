@@ -1,6 +1,7 @@
 import { View, StyleSheet, FlatList, Dimensions, Text } from "react-native";
 import Veggie from "./Veggie";
 import { CatalogData, Vegetable } from "@/types/types";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export function CatalogSkeleton() {
   //TODO: return a skeleton while loading data
@@ -36,23 +37,27 @@ export function Catalog({
   VeggiePressCallback: (vegetable: Vegetable) => void;
 }) {
   return (
-    <FlatList
-      data={formatData(catalog, numColumns)}
-      renderItem={({ item }: { item: Vegetable }) => {
-        if (Object.keys(item).length == 0) {
+    <SafeAreaView>
+      <FlatList
+        data={formatData(catalog, numColumns)}
+        renderItem={({ item }: { item: Vegetable }) => {
+          if (Object.keys(item).length == 0) {
+            return (
+              <Veggie
+                vegetable={{} as Vegetable}
+                pressCallback={() => {}}
+                style={{ backgroundColor: "transperent" }}
+              />
+            );
+          }
           return (
-            <Veggie
-              vegetable={{} as Vegetable}
-              pressCallback={() => {}}
-              style={{ backgroundColor: "transperent" }}
-            />
+            <Veggie vegetable={item} pressCallback={VeggiePressCallback} />
           );
-        }
-        return <Veggie vegetable={item} pressCallback={VeggiePressCallback} />;
-      }}
-      numColumns={numColumns}
-      style={style.veggieRow}
-    />
+        }}
+        numColumns={numColumns}
+        style={style.veggieRow}
+      />
+    </SafeAreaView>
   );
 }
 

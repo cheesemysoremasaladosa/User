@@ -1,10 +1,12 @@
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Callout } from "react-native-maps";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { PartnersWithLoc, TypeLocation } from "@/types/types";
+// import { mapstyle } from "@/types/maputils";
 import { Link, router } from "expo-router";
 import { useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
 // make location of type Location and get the
+
 const link = () => {};
 export function UserMap({
   location,
@@ -25,10 +27,20 @@ export function UserMap({
     <View style={styles.outer}>
       <View style={styles.container}>
         <MapView region={location} style={styles.map}>
-          <Marker coordinate={location} title="User" />
+          <Marker
+            // image={require("@/asstes/human-marker-pin-3d-style.png")}
+            coordinate={location}
+            title="User"
+          >
+            {/* <Image
+              source={require("@/asstes/human-marker-pin-3d-style.png")}
+              style={{ height: 30, width: 30 }}
+            /> */}
+          </Marker>
           {partners &&
             partners.length > 0 &&
             partners.map((location, index) => (
+              // add a callout here
               <Marker
                 key={index}
                 coordinate={{
@@ -45,7 +57,8 @@ export function UserMap({
                 }}
               >
                 <Image
-                  source={{ uri: "https://img.icons8.com/color/48/shop.png" }} // User marker icon from URL
+                  // source={{ uri: "https://img.icons8.com/color/48/shop.png" }} // User marker icon from URL
+                  source={require("@/asstes/veggie-shop--style.png")}
                   style={{ width: 30, height: 30 }}
                 />
               </Marker>
@@ -82,21 +95,21 @@ export function UserMap({
 
 const styles = StyleSheet.create({
   container: {
-    borderBottomWidth: 3,
-    borderEndWidth: 3,
-    borderLeftWidth: 3,
-    borderBottomEndRadius: 40,
-    borderBottomLeftRadius: 40,
-    borderColor: "green",
     overflow: "hidden",
   },
   outer: {
     width: "100%",
-    height: "60%",
+    height: "70%",
   },
   map: {
     width: "100%",
-    height: "98%",
+    height: "100%",
+  },
+  markerContainer: {
+    height: 20, // Set custom height for marker
+    width: 50, // Set custom width for marker
+    alignItems: "center",
+    justifyContent: "center",
   },
   infoContainer: {
     position: "absolute",

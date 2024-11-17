@@ -11,7 +11,6 @@ import { useState, useEffect, useMemo } from "react";
 import { Item, CatalogData } from "@/types/types";
 import { Catalog } from "@/components/Catalog";
 
-// const [items, setItems] = useState<Item[]>([]);
 let catalogMap: CatalogData = {} as CatalogData;
 export default function Layout() {
   const params = useLocalSearchParams();
@@ -48,7 +47,6 @@ export default function Layout() {
           name: catalog.get(item.vegetableId)?.name || "Unknown Vegetable",
         }));
 
-        // console.log(combinedData)
         setCombinedItems(combinedData);
       }
     }

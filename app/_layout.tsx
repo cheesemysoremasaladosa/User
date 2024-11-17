@@ -1,25 +1,35 @@
-import { StackRouter } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { Tabs } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import { useState } from "react";
 
+import { ThemeProvider } from "@react-navigation/native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
 export default function RootLayout() {
   const [title, setTitle] = useState("");
+
   return (
-    // <View style={styles.outerContainer}>
-    <Stack>
-      <Stack.Screen
-        name="(main)/index"
-        options={{
-          headerTintColor: "green",
-          // title: "BhajiWala",q
-          headerTitle: "Bhajiwala",
-          headerBackButtonMenuEnabled: true,
-        }}
-      />
-    </Stack>
-    // </View>
+    <SafeAreaProvider>
+      <View style={styles.outerContainer}>
+        <Stack
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: "white",
+            },
+            headerTintColor: "green",
+            headerBackVisible: true,
+          }}
+        >
+          <Stack.Screen
+            name="(main)/index" // This should match your folder structure
+            options={{
+              headerTitle: "Bhajiwala",
+              headerBackButtonMenuEnabled: true,
+            }}
+          />
+        </Stack>
+      </View>
+    </SafeAreaProvider>
   );
 }
 
@@ -31,7 +41,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   outerContainer: {
-    flex: 1, // Make sure it takes up the full screen
-    backgroundColor: "lightgray", // C
+    flex: 1,
+    backgroundColor: "lightgray",
   },
 });
